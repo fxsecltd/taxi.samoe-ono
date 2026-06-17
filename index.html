@@ -181,17 +181,13 @@ function redirectToFallback(lat,lon,latMicro,lonMicro){
     
   }else if(FALLBACK&&FALLBACK.type==='url'){
     // URL fallback - redirect to website
-    messageEl.textContent='No service found. Redirecting to website...';
-    
-    let seconds=3;
-    const timer=document.getElementById('timer');
-    timer.textContent='Redirecting in '+seconds+'...';
+    messageEl.textContent='Локаций не найдено. Перенаправление в каталог.';
     timer.style.display='block';
     
     const interval=setInterval(()=>{
       seconds--;
       if(seconds>0){
-        timer.textContent='Redirecting in '+seconds+'...';
+        timer.textContent='Перенаправление через '+seconds+' секунд...';
       }else{
         clearInterval(interval);
         window.location.href=FALLBACK.url;
