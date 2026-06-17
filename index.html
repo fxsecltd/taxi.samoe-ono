@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang=en>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>Geo Redirect - такси</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:grid;place-items:center;padding:20px;color:#fff}
+.container{background:rgba(255,255,255,0.98);border-radius:20px;box-shadow:0 25px 50px rgba(0,0,0,0.25);padding:40px;max-width:520px;width:100%;text-align:center;color:#1f2937}
+.loader{display:inline-block;width:60px;height:60px;border:4px solid rgba(59,130,246,0.2);border-top-color:#3b82f6;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:30px}
+@keyframes spin{to{transform:rotate(360deg)}}
+h1{font-size:28px;font-weight:700;margin-bottom:15px}
+.message{font-size:17px;margin-bottom:25px;color:#4b5563;line-height:1.5}
+.timer{font-size:20px;font-weight:600;margin:20px 0;color:#3b82f6}
+.coords{font-family:'Courier New',monospace;background:#f1f5f9;padding:12px;border-radius:8px;margin:15px 0;font-size:14px;color:#475569;text-align:left}
+.coords-line{margin:5px 0}
+.footer{color:#9ca3af;font-size:14px;margin-top:40px;padding-top:20px;border-top:1px solid #e5e7eb}
+.debug{font-size:12px;color:#9ca3af;margin-top:10px;word-break:break-all}
+.map-link{display:inline-block;margin-top:15px;color:#3b82f6;text-decoration:none;font-size:14px}
+.map-link:hover{text-decoration:underline}
+.info-box{background:#f0f9ff;border-left:4px solid#3b82f6;padding:15px;margin:20px 0;text-align:left;border-radius:8px}
+</style>
+<body>
+<div class=container>
+<div class=loader></div>
+<h1>Finding Nearest Location</h1>
+<div class=message id=message>Getting your location...</div>
+<div class=timer id=timer style=display:none></div>
+
+<div class=footer id=footer>93 service locations • Microdegree precision</div>
+</div>
+<script>
+// Zones data
+const Z=[[55682612,55772444,37304769,37458315,"https://samohodoff.ru"],[55702263,55792095,37462893,37616439,"http://xn--b1abccfreuvcr5af0l.xn--p1ai"],[55968078,56057910,37124459,37278005,"https://paketville.ru/"],[55784089,55873921,37574208,37727754,"http://letotaxi.ru/"],[55828715,55918547,37476485,37630031,"https://www.m.evaco-m.ru/"],[55667970,55757802,37645840,37799386,"https://locol.ru/"],[55665029,55754861,37578323,37731869,"https://nanologistika.ru/"],[55751292,55841124,37612015,37765561,"https://sharkom.ru/"],[55769526,55859358,37696642,37850188,"https://akbmoscow.ru/"],[55629231,55719063,37364079,37517625,"https://gortorgsnab.ru/"],[55709498,55799330,37480383,37633929,"https://cargo-mir.ru"],[55611352,55701184,37450885,37604431,"https://nta-prom.ru/"],[55667465,55757297,37343401,37496947,"http://sirius-aero.ru"],[55563298,55653130,37205155,37358701,"https://tamozhennyy-broker.ru"],[55563205,55653037,37205340,37358886,"https://tamozhennoe-oformlenie.com/"],[55563117,55652949,37205531,37359077,"https://aerosib.ru/"],[55563017,55652849,37205731,37359277,"https://cargowings.ru"],[55733511,55823343,37623022,37776568,"https://www.gkmc.ru/"],[55771644,55861476,37572654,37726200,"https://www.sadrin.ru/"],[55837023,55926855,37471266,37624812,"https://www.garotrade.ru/"],[55962773,56052605,37103611,37257157,"http://taxibambuk.ru"],[55666397,55756229,37534733,37688279,"https://timesavingmachine.ru"],[55046958,55136790,38701346,38854892,"https://keramstroi.ru"],[55514581,55604413,36479487,36633033,"http://AutoprofiK.ru"],[55821709,55911541,37324744,37478290,"https://www.bereg.com.ru/"],[55665937,55755769,37010413,37163959,"https://www.cdek.ru"],[55628683,55718515,37829778,37983324,"https://alfaevak.ru/"],[55941958,56031790,37790364,37943910,"https://avtodrug24.pro/"],[55494839,55584671,37680695,37834241,"https://aluport.ru/"],[55801760,55891592,37096057,37249603,"https://evacuator-tut.ru/"],[59980986,60070818,30357109,30510655,"https://nissan.autoprodix.ru"],[59844742,59934574,30202109,30355655,"https://bbbroker.ru/"],[59926970,60016802,30340088,30493634,"https://evakspb.ru/"],[59881135,59970967,30158817,30312363,"http://www.777taxi.ru/"],[59908645,59998477,30371548,30525094,"https://7154506.ru"],[59937270,60027102,30159012,30312558,"https://vp-grup.ru/"],[60507812,60597644,30214629,30368175,"http://xn--24-6kcahb1d7alhnhl0l.xn--p1ai"],[53219408,53309240,34260741,34414287,"https://vk.com/school_bryansk32"],[51643437,51733269,39143374,39296920,"http://www.abk-trans.ru"],[56912293,57002125,40924109,41077655,"https://www.424242.ru/"],[52306170,52396002,35274451,35427997,"http://modern-taxi.ru/"],[52688273,52778105,41340161,41493707,"https://www.dd-tambov.ru"],[57595096,57684928,39765131,39918677,"https://samosval76.ru/"],[60934548,61024380,32897733,33051279,"https://lidertaxi.ru"],[61611007,61700839,50757034,50910580,"https://ptklogist.ru/"],[64492796,64582628,40458858,40612404,"https://inti29.ru/"],[64489307,64579139,40492382,40645928,"https://nrg-tk.ru/contacts/russia/arkhangelsk/"],[54648041,54737873,20392560,20546106,"http://39trub.ru"],[45011110,45100942,37043675,37197221,"http://blagataxi.ru"],[45003844,45093676,37026759,37180305,"http://blagataxi.ru"],[46633145,46722977,38204322,38357868,"https://www.boschcarservice.com/ru/ru"],[43405661,43495493,39865682,40019228,"https://pegastransfer.ru/"],[45000801,45090633,37037200,37190746,"http://blagataxi.ru"],[49720474,49810306,43573328,43726874,"http://xn--80ahcoj4bcf.xn--p1ai"],[48767096,48856928,44731994,44885540,"http://region-transavto.ru"],[48715544,48805376,44397753,44551299,"https://glonass.tv/"],[48756573,48846405,44663054,44816600,"https://cargo-taxi.ru"],[47193022,47282854,38797109,38950655,"http://metrataxi.ru/taganrog"],[48125486,48215318,40708714,40862260,"https://taxineo.ru/"],[42936540,43026372,47384458,47538004,"https://play.google.com/store/apps/details?id=su.scat.client1004"],[43428418,43518250,43493591,43647137,"http://passagirskieperevozkikbr.ru"],[45030827,45120659,41932228,42085774,"http://www.dacar26.ru"],[44139943,44229775,43052998,43206544,"http://crafter-tl.ru/"],[54612315,54702147,55622207,55775753,"https://evakuator-gruzovoi.com/"],[55742338,55832170,49025621,49179167,"https://www.ufs-online.ru/"],[55252633,55342465,51921412,52074958,"https://www.estaxi.ru/taxi/16557/"],[55774796,55864628,49073288,49226834,"https://taximaxim.ru"],[56075574,56165406,47183430,47336976,"https://taximaxim.ru/site/"],[56082738,56172570,47137887,47291433,"https://yandex.ru/uslugi/profile/Edemlyozha-1911438"],[58251480,58341312,56342866,56496412,"https://sites.google.com/view/bitraffic/"],[56289297,56379129,43880930,44034476,"http://www.specstroyproyect.ru/"],[52942747,53032579,49330454,49484000,"https://www.taximustang.com"],[54292298,54382130,48471352,48624898,"https://ultaxi.pro/"],[54333756,54423588,48511427,48664973,"https://ultaxi.pro/"],[56871794,56961626,59881922,60035468,"http://taxionline.net"],[56823226,56913058,60518092,60671638,"https://unkno.ru/"],[57197000,57286832,59993671,60147217,"https://52525.ru"],[56827963,56917795,60584543,60738089,"https://tkrulevoy.ru"],[56847764,56937596,60493511,60647057,"https://a-discount.ru/"],[53345542,53435374,58903017,59056563,"https://kamelot.ru/"],[60897383,60987215,76526422,76679968,"https://cotlesch.wixsite.com/telefon--25-25-53"],[53295488,53385320,83652643,83806189,"http://etorussia.pro/"],[56008585,56098417,92843888,92997434,"https://arsa.pro/"],[53736431,53826263,87143337,87296883,"http://www.novokuzneckie-mikroavtobusi.ru/"],[54951788,55041620,82773695,82927241,"http://2212212.ru/"],[54980143,55069975,73338441,73491987,"https://gidrona.ru"],[56462156,56551988,84906050,85059596,"http://taxiprestige.org"],[51768124,51857956,107567261,107720807,"https://pecom.ru/ru/"],[51768586,51858418,107567610,107721156,"https://pecom.ru/ru/"],[52012916,52102748,113378953,113532499,"https://viteka.ru"],[43060419,43150251,131886830,132040376,"https://www.gruzovozoff.ru"],[43062557,43152389,131906423,132059969,"https://www.gruzovozoff.ru"],[43314533,43404365,132069029,132222575,"https://gruzoperevozki-i-evakuator.clients.site/"]];
+const XI=[20392560,30158817,30159012,30202109,30214629,30340088,30357109,30371548,32897733,34260741,35274451,36479487,37010413,37026759,37037200,37043675,37096057,37103611,37124459,37205155,37205340,37205531,37205731,37304769,37324744,37343401,37364079,37450885,37462893,37471266,37476485,37480383,37534733,37572654,37574208,37578323,37612015,37623022,37645840,37680695,37696642,37790364,37829778,38204322,38701346,38797109,39143374,39765131,39865682,40458858,40492382,40708714,40924109,41340161,41932228,43052998,43493591,43573328,43880930,44397753,44663054,44731994,47137887,47183430,47384458,48471352,48511427,49025621,49073288,49330454,50757034,51921412,55622207,56342866,58903017,59881922,59993671,60493511,60518092,60584543,73338441,76526422,82773695,83652643,84906050,87143337,92843888,107567261,107567610,113378953,131886830,131906423,132069029];
+const XID=[47,33,35,31,36,32,30,34,43,37,40,23,25,49,52,48,29,20,2,13,14,15,16,0,24,12,9,11,1,19,4,10,21,18,3,6,7,17,5,28,8,27,26,50,22,57,38,42,51,45,46,58,39,41,61,62,60,53,70,55,56,54,68,67,59,72,73,64,66,71,44,65,63,69,79,74,76,78,75,77,85,80,84,81,86,83,82,87,88,89,90,91,92];
+const YI=[42936540,43060419,43062557,43314533,43405661,43428418,44139943,45000801,45003844,45011110,45030827,46633145,47193022,48125486,48715544,48756573,48767096,49720474,51643437,51768124,51768586,52012916,52306170,52688273,52942747,53219408,53295488,53345542,53736431,54292298,54333756,54612315,54648041,54951788,54980143,55046958,55252633,55494839,55514581,55563017,55563117,55563205,55563298,55611352,55628683,55629231,55665029,55665937,55666397,55667465,55667970,55682612,55702263,55709498,55733511,55742338,55751292,55769526,55771644,55774796,55784089,55801760,55821709,55828715,55837023,55941958,55962773,55968078,56008585,56075574,56082738,56289297,56462156,56823226,56827963,56847764,56871794,56912293,57197000,57595096,58251480,59844742,59881135,59908645,59926970,59937270,59980986,60507812,60897383,60934548,61611007,64489307,64492796];
+const YID=[59,90,91,92,51,60,62,52,49,48,61,50,57,58,55,56,54,53,38,87,88,89,40,41,71,37,81,79,83,72,73,63,47,84,85,22,65,28,23,16,15,14,13,11,26,9,6,25,21,12,5,0,1,10,17,64,7,8,18,66,3,29,24,4,19,27,20,2,82,67,68,70,86,75,77,78,74,39,76,42,69,31,33,34,32,35,30,36,80,43,44,46,45];
+const MF=1000000;
+const SUBDOMAIN="такси";
+
+
+// Fallback configuration
+const FALLBACK={
+  type:"url",
+  
+  url:"https://самое-оно.рф",
+  name:"Website"
+};
+
+// Binary search
+function binarySearch(arr,val){
+  let l=0,r=arr.length-1;
+  while(l<=r){
+    const m=(l+r)>>1;
+    if(arr[m]<val)l=m+1;else r=m-1;
+  }
+  return l;
+}
+
+// Convert degrees to microdegrees
+function toMicrodegrees(lat,lon){
+  return{
+    y:Math.round(lat*MF),
+    x:Math.round(lon*MF)
+  };
+}
+
+// Convert microdegrees back to degrees
+function toDegrees(y,x){
+  return{
+    lat:y/MF,
+    lon:x/MF
+  };
+}
+
+// Create OpenStreetMap link with marker
+function createOSMWithMarker(lat,lon,title){
+  const encodedTitle=encodeURIComponent(title||'Location');
+  return 'https://www.openstreetmap.org/?mlat='+lat.toFixed(6)+'&mlon='+lon.toFixed(6)+
+         '#map=16/'+lat.toFixed(6)+'/'+lon.toFixed(6)+'&layers=N';
+}
+
+// Create simple OpenStreetMap link
+function createOpenStreetMapLink(lat,lon,zoom=16){
+  return 'https://www.openstreetmap.org/#map='+zoom+'/'+lat.toFixed(6)+'/'+lon.toFixed(6);
+}
+
+// PROPER mailto URL creation (UNIVERSAL FIX for Gmail, Mail.ru, Outlook)
+function createMailtoUrl(email,latMicro,lonMicro){
+  const subject='Где поблизости '+SUBDOMAIN;
+  const body=SUBDOMAIN+','+latMicro+','+lonMicro;
+  
+  // Step 1: Create RFC 2047 encoded subject (works in Outlook)
+  const utf8Bytes=new TextEncoder().encode(subject);
+  let binary='';
+  for(let i=0;i<utf8Bytes.length;i++){
+    binary+=String.fromCharCode(utf8Bytes[i]);
+  }
+  const base64=btoa(binary);
+  const rfc2047Subject='=?UTF-8?B?'+base64+'?=';
+  
+  // Step 2: URL-encode the already encoded subject (works in Gmail/Mail.ru)
+  const encodedSubject=encodeURIComponent(rfc2047Subject);
+  
+  // Step 3: Build the final mailto URL
+  const url='mailto:'+encodeURIComponent(email)+
+            '?subject='+encodedSubject+
+            '&body='+encodeURIComponent(body);
+  
+  return url;
+}
+
+// RFC 2047 encoding for email subject (keeping for compatibility)
+function encodeRFC2047(str){
+  try{
+    const utf8Bytes=new TextEncoder().encode(str);
+    let binary='';
+    for(let i=0;i<utf8Bytes.length;i++){
+      binary+=String.fromCharCode(utf8Bytes[i]);
+    }
+    const base64=btoa(binary);
+    return '=?UTF-8?B?'+base64+'?=';
+  }catch(e){
+    return encodeURIComponent(str);
+  }
+}
+
+// Zone search
+function findZone(x,y){
+  const xi=binarySearch(XI,x);
+  const xStart=Math.max(0,xi-20);
+  const xEnd=Math.min(XI.length-1,xi+20);
+  
+  const yi=binarySearch(YI,y);
+  const yStart=Math.max(0,yi-20);
+  const yEnd=Math.min(YI.length-1,yi+20);
+  
+  for(let i=xStart;i<=xEnd;i++){
+    const zoneId=XID[i];
+    const zone=Z[zoneId];
+    if(y>=zone[0]&&y<=zone[1]&&x>=zone[2]&&x<=zone[3]){
+      return zone;
+    }
+  }
+  
+  for(let i=yStart;i<=yEnd;i++){
+    const zoneId=YID[i];
+    const zone=Z[zoneId];
+    if(y>=zone[0]&&y<=zone[1]&&x>=zone[2]&&x<=zone[3]){
+      return zone;
+    }
+  }
+  
+  return null;
+}
+
+// Start redirect to fallback
+function redirectToFallback(lat,lon,latMicro,lonMicro){
+  const messageEl=document.getElementById('message');
+  
+  if(FALLBACK&&FALLBACK.type==='mailto'){
+    // Mailto fallback - redirect to mailto link
+    messageEl.textContent='No service found. Opening email client...';
+    const mailtoUrl=createMailtoUrl(FALLBACK.email,latMicro,lonMicro);
+    
+    setTimeout(()=>{
+      try{
+        window.location.href=mailtoUrl;
+      }catch(e){
+        console.error('Error opening mailto:',e);
+        // Альтернативный способ для мобильных
+        const a=document.createElement('a');
+        a.href=mailtoUrl;
+        a.style.display='none';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    },1500);
+    
+  }else if(FALLBACK&&FALLBACK.type==='url'){
+    // URL fallback - redirect to website
+    messageEl.textContent='No service found. Redirecting to website...';
+    
+    let seconds=3;
+    const timer=document.getElementById('timer');
+    timer.textContent='Redirecting in '+seconds+'...';
+    timer.style.display='block';
+    
+    const interval=setInterval(()=>{
+      seconds--;
+      if(seconds>0){
+        timer.textContent='Redirecting in '+seconds+'...';
+      }else{
+        clearInterval(interval);
+        window.location.href=FALLBACK.url;
+      }
+    },1000);
+    
+  }else{
+    // NO FALLBACK - Redirect to OpenStreetMap
+    messageEl.textContent='No service found. Opening map...';
+    
+    const osmUrl=createOSMWithMarker(lat,lon,SUBDOMAIN+' Search');
+    
+    let seconds=3;
+    const timer=document.getElementById('timer');
+    timer.textContent='Opening OpenStreetMap in '+seconds+'...';
+    timer.style.display='block';
+    
+    const interval=setInterval(()=>{
+      seconds--;
+      if(seconds>0){
+        timer.textContent='Opening OpenStreetMap in '+seconds+'...';
+      }else{
+        clearInterval(interval);
+        window.open(osmUrl,'_blank');
+        // После открытия карты показываем сообщение
+        messageEl.textContent='Map opened in new tab. You can close this page.';
+        timer.style.display='none';
+      }
+    },1000);
+  }
+}
+
+// Start redirect to service
+function startRedirect(url,message){
+  document.getElementById('message').textContent=message;
+  const timer=document.getElementById('timer');
+  
+  let seconds=3;
+  timer.textContent='Redirecting in '+seconds+'...';
+  timer.style.display='block';
+  
+  const interval=setInterval(()=>{
+    seconds--;
+    if(seconds>0){
+      timer.textContent='Redirecting in '+seconds+'...';
+    }else{
+      clearInterval(interval);
+      window.location.href=url;
+    }
+  },1000);
+}
+
+// Handle errors
+function handleError(message){
+  const messageEl=document.getElementById('message');
+  messageEl.textContent='Error: '+message;
+  messageEl.style.color='#ef4444';
+  
+  if(FALLBACK&&FALLBACK.type==='url'){
+    setTimeout(()=>{
+      startRedirect(FALLBACK.url,'Redirecting to website...');
+    },2000);
+  }else if(!FALLBACK){
+    // If no fallback and error, show message
+    setTimeout(()=>{
+      messageEl.textContent='Unable to determine location. Please enable location services.';
+    },2000);
+  }
+}
+
+// Main location check
+function checkLocation(){
+  if(!navigator.geolocation){
+    handleError('Geolocation not supported');
+    return;
+  }
+  
+  navigator.geolocation.getCurrentPosition(
+    (position)=>{
+      const lat=position.coords.latitude;
+      const lon=position.coords.longitude;
+      const accuracy=Math.round(position.coords.accuracy);
+      
+      // Update footer with map link
+      const osmUrl=createOSMWithMarker(lat,lon,'View on Map');
+      document.getElementById('footer').innerHTML=
+        Z.length+' locations • Accuracy: ±'+accuracy+'m • <a href="'+osmUrl+'" target="_blank" class="map-link">View on Map</a>';
+      
+      const microCoords=toMicrodegrees(lat,lon);
+      const zone=findZone(microCoords.x,microCoords.y);
+      
+      if(zone){
+        startRedirect(zone[4],'Found service nearby!');
+      }else{
+        redirectToFallback(lat,lon,microCoords.y,microCoords.x);
+      }
+    },
+    (error)=>{
+      let errorMessage='';
+      switch(error.code){
+        case 1:errorMessage='Location permission denied';break;
+        case 2:errorMessage='Location information unavailable';break;
+        case 3:errorMessage='Location request timeout';break;
+        default:errorMessage='Unable to get your location';
+      }
+      handleError(errorMessage);
+    },
+    {
+      enableHighAccuracy:true,
+      timeout:10000,
+      maximumAge:0
+    }
+  );
+}
+
+// Start automatically
+setTimeout(checkLocation,500);
+</script>
+</body>
+</html>
