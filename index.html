@@ -23,18 +23,18 @@ h1{font-size:28px;font-weight:700;margin-bottom:15px}
 <body>
 <div class=container>
 <div class=loader></div>
-<h1>Поиск ближайших локаций</h1>
-<div class=message id=message>Запрос локации...</div>
+<h1>Поиск ближайшей локации</h1>
+<div class=message id=message>Получение локации...</div>
 <div class=timer id=timer style=display:none></div>
 
-<div class=footer id=footer>93 локации сервисов • Точность - микроградусы</div>
+<div class=footer id=footer>93 локаций сервисов • Точность - микроградусы</div>
 </div>
 <script>
 // Zones data
-const Z=[[55682612,55772444,37304769,37458315,"https://samohodoff.ru"],[55702263,55792095,37462893,37616439,"http://xn--b1abccfreuvcr5af0l.xn--p1ai"],[55968078,56057910,37124459,37278005,"https://paketville.ru/"],[55784089,55873921,37574208,37727754,"http://letotaxi.ru/"],[55828715,55918547,37476485,37630031,"https://www.m.evaco-m.ru/"],[55667970,55757802,37645840,37799386,"https://locol.ru/"],[55665029,55754861,37578323,37731869,"https://nanologistika.ru/"],[55751292,55841124,37612015,37765561,"https://sharkom.ru/"],[55769526,55859358,37696642,37850188,"https://akbmoscow.ru/"],[55629231,55719063,37364079,37517625,"https://gortorgsnab.ru/"],[55709498,55799330,37480383,37633929,"https://cargo-mir.ru"],[55611352,55701184,37450885,37604431,"https://nta-prom.ru/"],[55667465,55757297,37343401,37496947,"http://sirius-aero.ru"],[55563298,55653130,37205155,37358701,"https://tamozhennyy-broker.ru"],[55563205,55653037,37205340,37358886,"https://tamozhennoe-oformlenie.com/"],[55563117,55652949,37205531,37359077,"https://aerosib.ru/"],[55563017,55652849,37205731,37359277,"https://cargowings.ru"],[55733511,55823343,37623022,37776568,"https://www.gkmc.ru/"],[55771644,55861476,37572654,37726200,"https://www.sadrin.ru/"],[55837023,55926855,37471266,37624812,"https://www.garotrade.ru/"],[55962773,56052605,37103611,37257157,"http://taxibambuk.ru"],[55666397,55756229,37534733,37688279,"https://timesavingmachine.ru"],[55046958,55136790,38701346,38854892,"https://keramstroi.ru"],[55514581,55604413,36479487,36633033,"http://AutoprofiK.ru"],[55821709,55911541,37324744,37478290,"https://www.bereg.com.ru/"],[55665937,55755769,37010413,37163959,"https://www.cdek.ru"],[55628683,55718515,37829778,37983324,"https://alfaevak.ru/"],[55941958,56031790,37790364,37943910,"https://avtodrug24.pro/"],[55494839,55584671,37680695,37834241,"https://aluport.ru/"],[55801760,55891592,37096057,37249603,"https://evacuator-tut.ru/"],[59980986,60070818,30357109,30510655,"https://nissan.autoprodix.ru"],[59844742,59934574,30202109,30355655,"https://bbbroker.ru/"],[59926970,60016802,30340088,30493634,"https://evakspb.ru/"],[59881135,59970967,30158817,30312363,"http://www.777taxi.ru/"],[59908645,59998477,30371548,30525094,"https://7154506.ru"],[59937270,60027102,30159012,30312558,"https://vp-grup.ru/"],[60507812,60597644,30214629,30368175,"http://xn--24-6kcahb1d7alhnhl0l.xn--p1ai"],[53219408,53309240,34260741,34414287,"https://vk.com/school_bryansk32"],[51643437,51733269,39143374,39296920,"http://www.abk-trans.ru"],[56912293,57002125,40924109,41077655,"https://www.424242.ru/"],[52306170,52396002,35274451,35427997,"http://modern-taxi.ru/"],[52688273,52778105,41340161,41493707,"https://www.dd-tambov.ru"],[57595096,57684928,39765131,39918677,"https://samosval76.ru/"],[60934548,61024380,32897733,33051279,"https://lidertaxi.ru"],[61611007,61700839,50757034,50910580,"https://ptklogist.ru/"],[64492796,64582628,40458858,40612404,"https://inti29.ru/"],[64489307,64579139,40492382,40645928,"https://nrg-tk.ru/contacts/russia/arkhangelsk/"],[54648041,54737873,20392560,20546106,"http://39trub.ru"],[45011110,45100942,37043675,37197221,"http://blagataxi.ru"],[45003844,45093676,37026759,37180305,"http://blagataxi.ru"],[46633145,46722977,38204322,38357868,"https://www.boschcarservice.com/ru/ru"],[43405661,43495493,39865682,40019228,"https://pegastransfer.ru/"],[45000801,45090633,37037200,37190746,"http://blagataxi.ru"],[49720474,49810306,43573328,43726874,"http://xn--80ahcoj4bcf.xn--p1ai"],[48767096,48856928,44731994,44885540,"http://region-transavto.ru"],[48715544,48805376,44397753,44551299,"https://glonass.tv/"],[48756573,48846405,44663054,44816600,"https://cargo-taxi.ru"],[47193022,47282854,38797109,38950655,"http://metrataxi.ru/taganrog"],[48125486,48215318,40708714,40862260,"https://taxineo.ru/"],[42936540,43026372,47384458,47538004,"https://play.google.com/store/apps/details?id=su.scat.client1004"],[43428418,43518250,43493591,43647137,"http://passagirskieperevozkikbr.ru"],[45030827,45120659,41932228,42085774,"http://www.dacar26.ru"],[44139943,44229775,43052998,43206544,"http://crafter-tl.ru/"],[54612315,54702147,55622207,55775753,"https://evakuator-gruzovoi.com/"],[55742338,55832170,49025621,49179167,"https://www.ufs-online.ru/"],[55252633,55342465,51921412,52074958,"https://www.estaxi.ru/taxi/16557/"],[55774796,55864628,49073288,49226834,"https://taximaxim.ru"],[56075574,56165406,47183430,47336976,"https://taximaxim.ru/site/"],[56082738,56172570,47137887,47291433,"https://yandex.ru/uslugi/profile/Edemlyozha-1911438"],[58251480,58341312,56342866,56496412,"https://sites.google.com/view/bitraffic/"],[56289297,56379129,43880930,44034476,"http://www.specstroyproyect.ru/"],[52942747,53032579,49330454,49484000,"https://www.taximustang.com"],[54292298,54382130,48471352,48624898,"https://ultaxi.pro/"],[54333756,54423588,48511427,48664973,"https://ultaxi.pro/"],[56871794,56961626,59881922,60035468,"http://taxionline.net"],[56823226,56913058,60518092,60671638,"https://unkno.ru/"],[57197000,57286832,59993671,60147217,"https://52525.ru"],[56827963,56917795,60584543,60738089,"https://tkrulevoy.ru"],[56847764,56937596,60493511,60647057,"https://a-discount.ru/"],[53345542,53435374,58903017,59056563,"https://kamelot.ru/"],[60897383,60987215,76526422,76679968,"https://cotlesch.wixsite.com/telefon--25-25-53"],[53295488,53385320,83652643,83806189,"http://etorussia.pro/"],[56008585,56098417,92843888,92997434,"https://arsa.pro/"],[53736431,53826263,87143337,87296883,"http://www.novokuzneckie-mikroavtobusi.ru/"],[54951788,55041620,82773695,82927241,"http://2212212.ru/"],[54980143,55069975,73338441,73491987,"https://gidrona.ru"],[56462156,56551988,84906050,85059596,"http://taxiprestige.org"],[51768124,51857956,107567261,107720807,"https://pecom.ru/ru/"],[51768586,51858418,107567610,107721156,"https://pecom.ru/ru/"],[52012916,52102748,113378953,113532499,"https://viteka.ru"],[43060419,43150251,131886830,132040376,"https://www.gruzovozoff.ru"],[43062557,43152389,131906423,132059969,"https://www.gruzovozoff.ru"],[43314533,43404365,132069029,132222575,"https://gruzoperevozki-i-evakuator.clients.site/"]];
-const XI=[20392560,30158817,30159012,30202109,30214629,30340088,30357109,30371548,32897733,34260741,35274451,36479487,37010413,37026759,37037200,37043675,37096057,37103611,37124459,37205155,37205340,37205531,37205731,37304769,37324744,37343401,37364079,37450885,37462893,37471266,37476485,37480383,37534733,37572654,37574208,37578323,37612015,37623022,37645840,37680695,37696642,37790364,37829778,38204322,38701346,38797109,39143374,39765131,39865682,40458858,40492382,40708714,40924109,41340161,41932228,43052998,43493591,43573328,43880930,44397753,44663054,44731994,47137887,47183430,47384458,48471352,48511427,49025621,49073288,49330454,50757034,51921412,55622207,56342866,58903017,59881922,59993671,60493511,60518092,60584543,73338441,76526422,82773695,83652643,84906050,87143337,92843888,107567261,107567610,113378953,131886830,131906423,132069029];
+const Z=[[55718545,55736511,37366187,37396897,"https://samohodoff.ru"],[55738196,55756162,37524311,37555021,"http://xn--b1abccfreuvcr5af0l.xn--p1ai"],[56004011,56021977,37185877,37216587,"https://paketville.ru/"],[55820022,55837988,37635626,37666336,"http://letotaxi.ru/"],[55864648,55882614,37537903,37568613,"https://www.m.evaco-m.ru/"],[55703903,55721869,37707258,37737968,"https://locol.ru/"],[55700962,55718928,37639741,37670451,"https://nanologistika.ru/"],[55787225,55805191,37673433,37704143,"https://sharkom.ru/"],[55805459,55823425,37758060,37788770,"https://akbmoscow.ru/"],[55665164,55683130,37425497,37456207,"https://gortorgsnab.ru/"],[55745431,55763397,37541801,37572511,"https://cargo-mir.ru"],[55647285,55665251,37512303,37543013,"https://nta-prom.ru/"],[55703398,55721364,37404819,37435529,"http://sirius-aero.ru"],[55599231,55617197,37266573,37297283,"https://tamozhennyy-broker.ru"],[55599138,55617104,37266758,37297468,"https://tamozhennoe-oformlenie.com/"],[55599050,55617016,37266949,37297659,"https://aerosib.ru/"],[55598950,55616916,37267149,37297859,"https://cargowings.ru"],[55769444,55787410,37684440,37715150,"https://www.gkmc.ru/"],[55807577,55825543,37634072,37664782,"https://www.sadrin.ru/"],[55872956,55890922,37532684,37563394,"https://www.garotrade.ru/"],[55998706,56016672,37165029,37195739,"http://taxibambuk.ru"],[55702330,55720296,37596151,37626861,"https://timesavingmachine.ru"],[55082891,55100857,38762764,38793474,"https://keramstroi.ru"],[55550514,55568480,36540905,36571615,"http://AutoprofiK.ru"],[55857642,55875608,37386162,37416872,"https://www.bereg.com.ru/"],[55701870,55719836,37071831,37102541,"https://www.cdek.ru"],[55664616,55682582,37891196,37921906,"https://alfaevak.ru/"],[55977891,55995857,37851782,37882492,"https://avtodrug24.pro/"],[55530772,55548738,37742113,37772823,"https://aluport.ru/"],[55837693,55855659,37157475,37188185,"https://evacuator-tut.ru/"],[60016919,60034885,30418527,30449237,"https://nissan.autoprodix.ru"],[59880675,59898641,30263527,30294237,"https://bbbroker.ru/"],[59962903,59980869,30401506,30432216,"https://evakspb.ru/"],[59917068,59935034,30220235,30250945,"http://www.777taxi.ru/"],[59944578,59962544,30432966,30463676,"https://7154506.ru"],[59973203,59991169,30220430,30251140,"https://vp-grup.ru/"],[60543745,60561711,30276047,30306757,"http://xn--24-6kcahb1d7alhnhl0l.xn--p1ai"],[53255341,53273307,34322159,34352869,"https://vk.com/school_bryansk32"],[51679370,51697336,39204792,39235502,"http://www.abk-trans.ru"],[56948226,56966192,40985527,41016237,"https://www.424242.ru/"],[52342103,52360069,35335869,35366579,"http://modern-taxi.ru/"],[52724206,52742172,41401579,41432289,"https://www.dd-tambov.ru"],[57631029,57648995,39826549,39857259,"https://samosval76.ru/"],[60970481,60988447,32959151,32989861,"https://lidertaxi.ru"],[61646940,61664906,50818452,50849162,"https://ptklogist.ru/"],[64528729,64546695,40520276,40550986,"https://inti29.ru/"],[64525240,64543206,40553800,40584510,"https://nrg-tk.ru/contacts/russia/arkhangelsk/"],[54683974,54701940,20453978,20484688,"http://39trub.ru"],[45047043,45065009,37105093,37135803,"http://blagataxi.ru"],[45039777,45057743,37088177,37118887,"http://blagataxi.ru"],[46669078,46687044,38265740,38296450,"https://www.boschcarservice.com/ru/ru"],[43441594,43459560,39927100,39957810,"https://pegastransfer.ru/"],[45036734,45054700,37098618,37129328,"http://blagataxi.ru"],[49756407,49774373,43634746,43665456,"http://xn--80ahcoj4bcf.xn--p1ai"],[48803029,48820995,44793412,44824122,"http://region-transavto.ru"],[48751477,48769443,44459171,44489881,"https://glonass.tv/"],[48792506,48810472,44724472,44755182,"https://cargo-taxi.ru"],[47228955,47246921,38858527,38889237,"http://metrataxi.ru/taganrog"],[48161419,48179385,40770132,40800842,"https://taxineo.ru/"],[42972473,42990439,47445876,47476586,"https://play.google.com/store/apps/details?id=su.scat.client1004"],[43464351,43482317,43555009,43585719,"http://passagirskieperevozkikbr.ru"],[45066760,45084726,41993646,42024356,"http://www.dacar26.ru"],[44175876,44193842,43114416,43145126,"http://crafter-tl.ru/"],[54648248,54666214,55683625,55714335,"https://evakuator-gruzovoi.com/"],[55778271,55796237,49087039,49117749,"https://www.ufs-online.ru/"],[55288566,55306532,51982830,52013540,"https://www.estaxi.ru/taxi/16557/"],[55810729,55828695,49134706,49165416,"https://taximaxim.ru"],[56111507,56129473,47244848,47275558,"https://taximaxim.ru/site/"],[56118671,56136637,47199305,47230015,"https://yandex.ru/uslugi/profile/Edemlyozha-1911438"],[58287413,58305379,56404284,56434994,"https://sites.google.com/view/bitraffic/"],[56325230,56343196,43942348,43973058,"http://www.specstroyproyect.ru/"],[52978680,52996646,49391872,49422582,"https://www.taximustang.com"],[54328231,54346197,48532770,48563480,"https://ultaxi.pro/"],[54369689,54387655,48572845,48603555,"https://ultaxi.pro/"],[56907727,56925693,59943340,59974050,"http://taxionline.net"],[56859159,56877125,60579510,60610220,"https://unkno.ru/"],[57232933,57250899,60055089,60085799,"https://52525.ru"],[56863896,56881862,60645961,60676671,"https://tkrulevoy.ru"],[56883697,56901663,60554929,60585639,"https://a-discount.ru/"],[53381475,53399441,58964435,58995145,"https://kamelot.ru/"],[60933316,60951282,76587840,76618550,"https://cotlesch.wixsite.com/telefon--25-25-53"],[53331421,53349387,83714061,83744771,"http://etorussia.pro/"],[56044518,56062484,92905306,92936016,"https://arsa.pro/"],[53772364,53790330,87204755,87235465,"http://www.novokuzneckie-mikroavtobusi.ru/"],[54987721,55005687,82835113,82865823,"http://2212212.ru/"],[55016076,55034042,73399859,73430569,"https://gidrona.ru"],[56498089,56516055,84967468,84998178,"http://taxiprestige.org"],[51804057,51822023,107628679,107659389,"https://pecom.ru/ru/"],[51804519,51822485,107629028,107659738,"https://pecom.ru/ru/"],[52048849,52066815,113440371,113471081,"https://viteka.ru"],[43096352,43114318,131948248,131978958,"https://www.gruzovozoff.ru"],[43098490,43116456,131967841,131998551,"https://www.gruzovozoff.ru"],[43350466,43368432,132130447,132161157,"https://gruzoperevozki-i-evakuator.clients.site/"]];
+const XI=[20453978,30220235,30220430,30263527,30276047,30401506,30418527,30432966,32959151,34322159,35335869,36540905,37071831,37088177,37098618,37105093,37157475,37165029,37185877,37266573,37266758,37266949,37267149,37366187,37386162,37404819,37425497,37512303,37524311,37532684,37537903,37541801,37596151,37634072,37635626,37639741,37673433,37684440,37707258,37742113,37758060,37851782,37891196,38265740,38762764,38858527,39204792,39826549,39927100,40520276,40553800,40770132,40985527,41401579,41993646,43114416,43555009,43634746,43942348,44459171,44724472,44793412,47199305,47244848,47445876,48532770,48572845,49087039,49134706,49391872,50818452,51982830,55683625,56404284,58964435,59943340,60055089,60554929,60579510,60645961,73399859,76587840,82835113,83714061,84967468,87204755,92905306,107628679,107629028,113440371,131948248,131967841,132130447];
 const XID=[47,33,35,31,36,32,30,34,43,37,40,23,25,49,52,48,29,20,2,13,14,15,16,0,24,12,9,11,1,19,4,10,21,18,3,6,7,17,5,28,8,27,26,50,22,57,38,42,51,45,46,58,39,41,61,62,60,53,70,55,56,54,68,67,59,72,73,64,66,71,44,65,63,69,79,74,76,78,75,77,85,80,84,81,86,83,82,87,88,89,90,91,92];
-const YI=[42936540,43060419,43062557,43314533,43405661,43428418,44139943,45000801,45003844,45011110,45030827,46633145,47193022,48125486,48715544,48756573,48767096,49720474,51643437,51768124,51768586,52012916,52306170,52688273,52942747,53219408,53295488,53345542,53736431,54292298,54333756,54612315,54648041,54951788,54980143,55046958,55252633,55494839,55514581,55563017,55563117,55563205,55563298,55611352,55628683,55629231,55665029,55665937,55666397,55667465,55667970,55682612,55702263,55709498,55733511,55742338,55751292,55769526,55771644,55774796,55784089,55801760,55821709,55828715,55837023,55941958,55962773,55968078,56008585,56075574,56082738,56289297,56462156,56823226,56827963,56847764,56871794,56912293,57197000,57595096,58251480,59844742,59881135,59908645,59926970,59937270,59980986,60507812,60897383,60934548,61611007,64489307,64492796];
+const YI=[42972473,43096352,43098490,43350466,43441594,43464351,44175876,45036734,45039777,45047043,45066760,46669078,47228955,48161419,48751477,48792506,48803029,49756407,51679370,51804057,51804519,52048849,52342103,52724206,52978680,53255341,53331421,53381475,53772364,54328231,54369689,54648248,54683974,54987721,55016076,55082891,55288566,55530772,55550514,55598950,55599050,55599138,55599231,55647285,55664616,55665164,55700962,55701870,55702330,55703398,55703903,55718545,55738196,55745431,55769444,55778271,55787225,55805459,55807577,55810729,55820022,55837693,55857642,55864648,55872956,55977891,55998706,56004011,56044518,56111507,56118671,56325230,56498089,56859159,56863896,56883697,56907727,56948226,57232933,57631029,58287413,59880675,59917068,59944578,59962903,59973203,60016919,60543745,60933316,60970481,61646940,64525240,64528729];
 const YID=[59,90,91,92,51,60,62,52,49,48,61,50,57,58,55,56,54,53,38,87,88,89,40,41,71,37,81,79,83,72,73,63,47,84,85,22,65,28,23,16,15,14,13,11,26,9,6,25,21,12,5,0,1,10,17,64,7,8,18,66,3,29,24,4,19,27,20,2,82,67,68,70,86,75,77,78,74,39,76,42,69,31,33,34,32,35,30,36,80,43,44,46,45];
 const MF=1000000;
 const SUBDOMAIN="такси";
@@ -74,58 +74,6 @@ function toDegrees(y,x){
   };
 }
 
-// Create OpenStreetMap link with marker
-function createOSMWithMarker(lat,lon,title){
-  const encodedTitle=encodeURIComponent(title||'Location');
-  return 'https://www.openstreetmap.org/?mlat='+lat.toFixed(6)+'&mlon='+lon.toFixed(6)+
-         '#map=16/'+lat.toFixed(6)+'/'+lon.toFixed(6)+'&layers=N';
-}
-
-// Create simple OpenStreetMap link
-function createOpenStreetMapLink(lat,lon,zoom=16){
-  return 'https://www.openstreetmap.org/#map='+zoom+'/'+lat.toFixed(6)+'/'+lon.toFixed(6);
-}
-
-// PROPER mailto URL creation (UNIVERSAL FIX for Gmail, Mail.ru, Outlook)
-function createMailtoUrl(email,latMicro,lonMicro){
-  const subject='Где поблизости '+SUBDOMAIN;
-  const body=SUBDOMAIN+','+latMicro+','+lonMicro;
-  
-  // Step 1: Create RFC 2047 encoded subject (works in Outlook)
-  const utf8Bytes=new TextEncoder().encode(subject);
-  let binary='';
-  for(let i=0;i<utf8Bytes.length;i++){
-    binary+=String.fromCharCode(utf8Bytes[i]);
-  }
-  const base64=btoa(binary);
-  const rfc2047Subject='=?UTF-8?B?'+base64+'?=';
-  
-  // Step 2: URL-encode the already encoded subject (works in Gmail/Mail.ru)
-  const encodedSubject=encodeURIComponent(rfc2047Subject);
-  
-  // Step 3: Build the final mailto URL
-  const url='mailto:'+encodeURIComponent(email)+
-            '?subject='+encodedSubject+
-            '&body='+encodeURIComponent(body);
-  
-  return url;
-}
-
-// RFC 2047 encoding for email subject (keeping for compatibility)
-function encodeRFC2047(str){
-  try{
-    const utf8Bytes=new TextEncoder().encode(str);
-    let binary='';
-    for(let i=0;i<utf8Bytes.length;i++){
-      binary+=String.fromCharCode(utf8Bytes[i]);
-    }
-    const base64=btoa(binary);
-    return '=?UTF-8?B?'+base64+'?=';
-  }catch(e){
-    return encodeURIComponent(str);
-  }
-}
-
 // Zone search
 function findZone(x,y){
   const xi=binarySearch(XI,x);
@@ -159,29 +107,13 @@ function findZone(x,y){
 function redirectToFallback(lat,lon,latMicro,lonMicro){
   const messageEl=document.getElementById('message');
   
-  if(FALLBACK&&FALLBACK.type==='mailto'){
-    // Mailto fallback - redirect to mailto link
-    messageEl.textContent='No service found. Opening email client...';
-    const mailtoUrl=createMailtoUrl(FALLBACK.email,latMicro,lonMicro);
-    
-    setTimeout(()=>{
-      try{
-        window.location.href=mailtoUrl;
-      }catch(e){
-        console.error('Error opening mailto:',e);
-        // Альтернативный способ для мобильных
-        const a=document.createElement('a');
-        a.href=mailtoUrl;
-        a.style.display='none';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
-    },1500);
-    
-  }else if(FALLBACK&&FALLBACK.type==='url'){
+  if(FALLBACK&&FALLBACK.type==='url'){
     // URL fallback - redirect to website
-    messageEl.textContent='Локаций не найдено. Перенаправление в каталог.';
+    messageEl.textContent='Локаций не найдено. Перенаправление в каталог...';
+    
+    let seconds=3;
+    const timer=document.getElementById('timer');
+    timer.textContent='Перенаправление через '+seconds+' секунд...';
     timer.style.display='block';
     
     const interval=setInterval(()=>{
@@ -193,30 +125,7 @@ function redirectToFallback(lat,lon,latMicro,lonMicro){
         window.location.href=FALLBACK.url;
       }
     },1000);
-    
-  }else{
-    // NO FALLBACK - Redirect to OpenStreetMap
-    messageEl.textContent='No service found. Opening map...';
-    
-    const osmUrl=createOSMWithMarker(lat,lon,SUBDOMAIN+' Search');
-    
-    let seconds=3;
-    const timer=document.getElementById('timer');
-    timer.textContent='Opening OpenStreetMap in '+seconds+'...';
-    timer.style.display='block';
-    
-    const interval=setInterval(()=>{
-      seconds--;
-      if(seconds>0){
-        timer.textContent='Opening OpenStreetMap in '+seconds+'...';
-      }else{
-        clearInterval(interval);
-        window.open(osmUrl,'_blank');
-        // После открытия карты показываем сообщение
-        messageEl.textContent='Map opened in new tab. You can close this page.';
-        timer.style.display='none';
-      }
-    },1000);
+   
   }
 }
 
@@ -243,7 +152,7 @@ function startRedirect(url,message){
 // Handle errors
 function handleError(message){
   const messageEl=document.getElementById('message');
-  messageEl.textContent='Error: '+message;
+  messageEl.textContent='Ошибка: '+message;
   messageEl.style.color='#ef4444';
   
   if(FALLBACK&&FALLBACK.type==='url'){
@@ -253,7 +162,7 @@ function handleError(message){
   }else if(!FALLBACK){
     // If no fallback and error, show message
     setTimeout(()=>{
-      messageEl.textContent='Unable to determine location. Please enable location services.';
+      messageEl.textContent='Ошибка получения локации. Включите определение локации.';
     },2000);
   }
 }
@@ -261,7 +170,7 @@ function handleError(message){
 // Main location check
 function checkLocation(){
   if(!navigator.geolocation){
-    handleError('Geolocation not supported');
+    handleError('Определение локации не поддерживается');
     return;
   }
   
@@ -272,15 +181,14 @@ function checkLocation(){
       const accuracy=Math.round(position.coords.accuracy);
       
       // Update footer with map link
-      const osmUrl=createOSMWithMarker(lat,lon,'View on Map');
       document.getElementById('footer').innerHTML=
-        Z.length+' locations • Accuracy: ±'+accuracy+'m • <a href="'+osmUrl+'" target="_blank" class="map-link">View on Map</a>';
+        Z.length+' локаций • Точность: ±'+accuracy+'m';
       
       const microCoords=toMicrodegrees(lat,lon);
       const zone=findZone(microCoords.x,microCoords.y);
       
       if(zone){
-        startRedirect(zone[4],'Found service nearby!');
+        startRedirect(zone[4],'Локация обнаружена!');
       }else{
         redirectToFallback(lat,lon,microCoords.y,microCoords.x);
       }
@@ -288,10 +196,10 @@ function checkLocation(){
     (error)=>{
       let errorMessage='';
       switch(error.code){
-        case 1:errorMessage='Location permission denied';break;
-        case 2:errorMessage='Location information unavailable';break;
-        case 3:errorMessage='Location request timeout';break;
-        default:errorMessage='Unable to get your location';
+        case 1:errorMessage='Запрет получения локации';break;
+        case 2:errorMessage='Информация о локации недоступна';break;
+        case 3:errorMessage='Таймаут запроса локации';break;
+        default:errorMessage='Невозможно получить локацию';
       }
       handleError(errorMessage);
     },
