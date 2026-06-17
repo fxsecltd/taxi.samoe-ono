@@ -226,13 +226,13 @@ function startRedirect(url,message){
   const timer=document.getElementById('timer');
   
   let seconds=3;
-  timer.textContent='Redirecting in '+seconds+'...';
+  timer.textContent='Перенаправление через '+seconds+' секунд...';
   timer.style.display='block';
   
   const interval=setInterval(()=>{
     seconds--;
     if(seconds>0){
-      timer.textContent='Redirecting in '+seconds+'...';
+      timer.textContent='Перенаправление через '+seconds+' секунд...';
     }else{
       clearInterval(interval);
       window.location.href=url;
@@ -248,7 +248,7 @@ function handleError(message){
   
   if(FALLBACK&&FALLBACK.type==='url'){
     setTimeout(()=>{
-      startRedirect(FALLBACK.url,'Redirecting to website...');
+      startRedirect(FALLBACK.url,'Перенаправление...');
     },2000);
   }else if(!FALLBACK){
     // If no fallback and error, show message
